@@ -1,0 +1,56 @@
+#citim din fisierul de intrare sirul si cheia
+#chit ca nu asta e formatul de input , il las momentan asa pentru simplitate si lizibilitate
+
+f = open("text.in" , "r")
+sir , cheie = f.read().split()
+
+
+#transformam atat sirul cat si cheia intr-o lista de coduri ascii ale literelor
+# "s" are codul ascii 115 in b10 deci codul 01110011
+# daca cuvantul de criptat este "sss" atunci vom retine in lista S ["01110011","01110011","01110011"]
+
+S = [] #aici retinem codurile ascii ale sirului sursa
+C = [] #aici retinem codurile ascii ale cheii
+
+for i in range (len(sir)):
+    x = ord(sir[i]) #acesta e codul ascii in b10
+    x = bin(x)
+    S.append(x[2:]) #il introducem in lista in b2 si eliminal prexiul 0b
+
+for i in range (len(cheie)):
+    x = ord(cheie[i]) #acesta e codul ascii in b10
+    x = (bin(x))
+    C.append(x[2:]) #il introducem in lista in b2 si elem prexiul 0b
+
+print(S)
+print(C)
+#pentru a reliza criptarea facem xor intre elementele listei S si elementele listei C aflate pe aceeasi pozitie
+#de mentionat ca lista C in general va avea mai putine elemente decat lista S , asa ca aplicam un % len(sir)
+#pentru a reseta pozitia din lista C
+
+A = [] # in lista asta vom pune rezultatele criptarii
+l = len(S)
+for i in range(l):
+    L = [] # lista auxiliara
+    for cifra in range (0, 8): #parcurgem fiecare element cifra binara a lui S si C
+        a = int (S[i][cifra]) #convertim la int pentru a putea realiza operatia de xor
+        b = int (C[i % (l - 1)][cifra])
+        x = a ^ b
+        L.append(x) #adaugam bitul rezultat in urma criptarii
+    A.append(L) #adaugam lista care contine bitii corespunzatori unui singur cuvant criptat
+
+#in A avem lista de coduri ascii dupa criptare , de forma [0,1,1,1,0,0,1,1]
+#voi defini o functie care sa asocieze unei liste numarul in b10 corespunzator
+
+def conversie(L): #primeste o lista ca parametru
+    numar = 0
+    for i in range (0, 8):
+        numar = numar + int(L[i]) * 2 ** (7 - i)
+    return numar #acum rezultatul e in b10
+
+#urmeaza ca pt fiecare element din lista A sa aplicam functia de conversie
+#ramane doar sa afisam caracterul corespunzator codului ascii obtinut , folosind chr
+
+for lista in A:
+    x = conversie(lista)
+    print(chr(x) , end = "")
